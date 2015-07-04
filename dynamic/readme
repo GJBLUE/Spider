@@ -6,3 +6,4 @@ Q: 在多添加了几个headers属性后，出现httplib.BadStatusLine: ''
 S: 添加Host无效,报错的开始是打开req的问题。将POST内容全部放入也没用。尝试加入代理，error，cookie似乎无用。尝试强制抛出错误，success。
 Q: page = response.read()读不出内容。
 S: 好吧，response就没有获取到。将headers里面所有属性都加进去，error。
+
