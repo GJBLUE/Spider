@@ -1,14 +1,24 @@
 爬取17ce，该网站用AJAX将数据返回。
-利用fiddler4进行抓包进行查看，发现数据是josn格式存储在那里。
-
-Q: POST请求后，出现{"message":"非法请求"}
-S: 初步猜测爬虫被发现，添加User-Agent和Referer,还是被BAN。排除HTTP和URL问题，应该还是爬虫被发现了。
-Q: 在多添加了几个headers属性后，出现httplib.BadStatusLine: ''
-S: 添加Host无效,报错的开始是打开req的问题。将POST内容全部放入也没用。尝试加入代理，error，cookie似乎无用。尝试强制抛出错误，success。
-Q: page = response.read()读不出内容。
-S: 好吧，response就没有获取到。将headers里面所有属性都加进去，error。
-
-想了下，既然我需要数据在json里，那直接获取josn得了。但数据并不是json。
+利用fiddler4进行抓包进行查看，发现数据分两块进行了存储。
 思路：最终效果是要输入一个网址，就能得到它返回的特定数据。但要分析之后，发现需要先将需要查询的网址POST过去，发现一个返回值，填入第二个POST请求中，这才可以获得需要的一系列数据。
 
+Q: POST请求后，出现{"message":"非法请求"}
+S: 初步猜测爬虫被发现，添加User-Agent和Referer等一系列属性,还是被BAN。排除HTTP和URL问题，应该还是爬虫被发现了。恩，只保留User-Agent和Referer之后OK，估计某个属性会改变或者我打错了。
+
+Q: 在多添加了几个headers属性后，出现httplib.BadStatusLine: ''
+S: 添加Host无效,报错的开始是打开req的问题。将POST内容全部放入也没用。尝试加入代理，error，cookie似乎无用。是httplib遇到了无法识别的状态码。尝试try..catch...强制抛出错误，success。
+
+Q: page = response.read()读不出内容。
+S: 好吧，response就没有获取到。将headers里面所有属性都加进去，error，此处应该是第一个问题的锅。将代码重构一遍，解决。
+
+想了下，既然我需要数据在json里，那直接获取josn得了。但数据并不是json。
+Q: 网页返回的数据是str，但这个str是一层层字典嵌套的格式，不是JSON，无法直接json.loads进行处理。
+S: 使用json.dumps()先将数据转化为json字符串。
+
+Q: 遇到了最大问题，先dumps,再loads之后，出来的格式是unicode,然后根据官方文档，dumps时出来的是str，str在loads之后，就是unicode。但是，在ipython中尝试，它最后居然是dict。。。。dict。。
+S: json.loads().encode('utf-8')结果将unicode变为str，问题应该是是从网页出来的是str类型，所以最后变为unicode，ipython测试时一开始给的就是dict，所以最后也是dict。但我需要的是dict，将网页一开始就变为字典：
+data = eval(page)
+datas = json.dumps(data,ensure_ascii=False)
+jsondatas = json.loads(datas)
+但eval可能会有风险，这个之后在考虑新的写法。
 
