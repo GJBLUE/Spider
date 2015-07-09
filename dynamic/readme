@@ -1,4 +1,4 @@
-爬取17ce，该网站用AJAX将数据返回。
+爬取http://www.17ce.com/，该网站用AJAX将数据返回。
 利用fiddler4进行抓包进行查看，发现数据分两块进行了存储。
 思路：最终效果是要输入一个网址，就能得到它返回的特定数据。但要分析之后，发现需要先将需要查询的网址POST过去，发现一个返回值，填入第二个POST请求中，这才可以获得需要的一系列数据。
 
@@ -22,3 +22,5 @@ datas = json.dumps(data,ensure_ascii=False)
 jsondatas = json.loads(datas)
 但eval可能会有风险，这个之后在考虑新的写法。
 
+Q: POST过去之后，请求到的数据不全。
+S: 请求的POST表单中，存在重复的属性，在进过urllib.urlencode()之后，这些重复的属性会变成一个。直接从fiddler上把post串拿了下来，这次得到大量数据了。
