@@ -1,0 +1,33 @@
+bishe.py :爬虫主体
+douban.py :用于模拟登录豆瓣
+tool.py :re，除去网页上一些不正常出现的标签的等
+urlfilter.py :hash，压缩url，去重等。
+
+
+多线程爬取豆瓣网电影排行和时光网电影排行，根据id进行区分网站。xpath语句存储在数据库中，如果要修改规则的话直接在数据库中修改就可以了。目前代码修改，可连接PHP。
+
+爬取时光网电影排行的xpath语句
+id：自己定义
+firsturl :自己定义
+allurl://*[@id="PageNavigator"]/a/@href
+top://*[@id="asyncRatingRegion"]/li/div[1]/em/text()
+moiveurl://*[@id="asyncRatingRegion"]/li/div[2]/a/@href
+photo://*[@id="asyncRatingRegion"]/li/div[2]/a/img/@src
+title://*[@id="asyncRatingRegion"]/li/div[3]/h2/a/text()
+pinfen://*[@id="asyncRatingRegion"]/li/div[4]/b/text()
+num://*[@id="asyncRatingRegion"]/li/div[4]/p/text()
+brief://*[@id="asyncRatingRegion"]/li/div[3]/p[4]/text()
+自定义路径
+
+爬取豆瓣网电影排行的xpath语句
+id：自己定义
+firsturl :自己定义
+allurl://*[@id="content"]/div/div[1]/div[2]/a/@href
+top://*[@id="content"]/div/div[1]/ol/li/div/div[1]/em/text()
+moiveurl://*[@id="content"]/div/div[1]/ol/li/div/div[1]/a/@href
+photo://*[@id="content"]/div/div[1]/ol/li/div/div[1]/a/img/@src
+title://*[@id="content"]/div/div[1]/ol/li/div/div[2]/div[1]/a/span[1]/text()
+pinfen://*[@id="content"]/div/div[1]/ol/li/div/div[2]/div[2]/div/span[1]/em/text()
+num://*[@id="content"]/div/div[1]/ol/li/div/div[2]/div[2]/div/span[2]/text()
+brief://*[@id="content"]/div/div[1]/ol/li/div/div[2]/div[2]/p[2]/span/text()
+自定义路径
