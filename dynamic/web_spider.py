@@ -8,6 +8,7 @@ import json
 import pdb
 import httplib
 import requests
+import ast
 from requests import Request, Session
 import sys
 
@@ -26,7 +27,7 @@ headers = {
  
             'Host':'www.17ce.com',
             #'Accept-Encoding':'gzip, deflate',
-
+            'Connection':'keep-alive',
             'Accept':'*/*',
             'DNT':'1'
         }
@@ -35,7 +36,7 @@ headers = {
 #获取POST后网页返回的数据
 def getPage(url, post, headers):
     #获取response
-    response = requests.post(url, data = post, headers = headers, stream=False)
+    response = requests.post(url, data = post, headers = headers)
     
     page = response.content
     # s = Session()
@@ -44,7 +45,7 @@ def getPage(url, post, headers):
     # resp = s.send(prepped)
     # page = resp.content
     
-    data = eval(page, {}, {})
+    data = ast.literal_eval(page)
     datas = json.dumps(data,ensure_ascii=False)
     jsondatas = json.loads(datas)
     return jsondatas
@@ -82,6 +83,11 @@ def getSecondData():
     #第二个POST网址
     targetUrl = 'http://www.17ce.com/site/ajaxfresh'
     #以dict形式获取到所需的数据
+    datas = {}
+    # for i in range(5):
+    #     import time
+    #     time.sleep(1)
+    #     datas.update(getPage(targetUrl, post, headers))
     datas = getPage(targetUrl, post, headers)
     #print datas
     data = datas['freshdata']

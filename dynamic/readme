@@ -23,10 +23,13 @@ S: json.loads().encode('utf-8')结果将unicode变为str，问题应该是是从
 data = eval(page)
 datas = json.dumps(data,ensure_ascii=False)
 jsondatas = json.loads(datas)
-但eval可能会有风险，这个之后在考虑新的写法。写法改为eval(name, {}, {})提高了安全性。
+但eval可能会有风险，这个之后在考虑新的写法。写法改为eval(name, {}, {})提高了安全性。好吧，eval弃用，原来问题在于python中json模块不支持数字当主键。采用re替换吧。发现了真正的问题在于，JSON字符串中，不能包含单引号，而必须是双引号。恍然大悟，由于数据中存在value没有""，放弃re。
+import ast
+data = ast.literal_eval(page)
+解决了eval的安全性问题。
 
 Q: POST过去之后，请求到的数据不全。
 S: 请求的POST表单中，存在重复的属性，在进过urllib.urlencode()之后，这些重复的属性会变成一个。直接从fiddler上把post串拿了下来，这次得到大量数据了。
 
 Q: 在爬取过程中Fidler开着可取的大量数据，但关闭Fiddler之后，只有几个甚至没有数据....将请求的报文数据放在Fiddler中模拟请求时，居然，居然。。。。取到了所有数据。。。
-S: 查阅了不少资料，坑估计是urllib2的，因为请求报文里面Connection: close，urllib2不能建立长链接，尝试去换下requests。已换requests，但是在不开fiddler的情况下还是连了之后很快就断了，不是connection的问题。
+A: 查阅了不少资料，坑估计是urllib2的，因为请求报文里面Connection: close，urllib2不能建立长链接，尝试去换下requests。已换requests，但是在不开fiddler的情况下还是连了之后很快就断了，不是connection的问题。问题出在了网页后台会间断的发送数据过来，而不是一次发送过来。for循环可以处理，但你不知道要循环几次。
