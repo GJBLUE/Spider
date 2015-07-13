@@ -5,6 +5,7 @@ import urllib
 import urllib2
 import re
 import json
+import time
 import pdb
 import httplib
 import requests
@@ -15,8 +16,9 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-testUrl = 'www.bilibili.com'
 
+#testUrl = 'www.acfun.com'
+testUrl = raw_input('请输入您要测试的网址：')
 
 
 headers = {
@@ -24,7 +26,8 @@ headers = {
             'Referer':'http://www.17ce.com/',
             'Origin':'http://www.17ce.com',
             'Content-type':'application/x-www-form-urlencoded',
- 
+            #'Content-Length':'223',
+            #'Transfer-Encoding':'chunked',
             'Host':'www.17ce.com',
             #'Accept-Encoding':'gzip, deflate',
             'Connection':'keep-alive',
@@ -36,8 +39,9 @@ headers = {
 #获取POST后网页返回的数据
 def getPage(url, post, headers):
     #获取response
+
     response = requests.post(url, data = post, headers = headers)
-    
+   
     page = response.content
     # s = Session()
     # req = Request('POST', url, data = post, headers = headers)
@@ -84,17 +88,18 @@ def getSecondData():
     targetUrl = 'http://www.17ce.com/site/ajaxfresh'
     #以dict形式获取到所需的数据
     datas = {}
-    # for i in range(5):
-    #     import time
-    #     time.sleep(1)
-    #     datas.update(getPage(targetUrl, post, headers))
-    datas = getPage(targetUrl, post, headers)
+    for i in range(6):
+        
+        time.sleep(1)
+        datas.update(getPage(targetUrl, post, headers))
+    #datas = getPage(targetUrl, post, headers)
     #print datas
     data = datas['freshdata']
     #print type(data)
     #print data
     for key , value in data.items():
         print value['name'], value['speed']
+        
 
 
 
