@@ -1,0 +1,6 @@
+settings.py
+config.py
+*.pyc
+*.exe
+*.dll
+*.*~
