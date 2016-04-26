@@ -5,6 +5,7 @@ from scrapy.spider import Spider
 from scrapy.selector import Selector
 from Managa.items import ManagaItem
 
+
 class u17Spider(Spider):
 
     name = "u17"
@@ -12,13 +13,12 @@ class u17Spider(Spider):
 
     start_urls = [
         "http://www.u17.com/comic/190.html",
-        "http://www.u17.com/comic/13707.html"
+        "http://www.u17.com/comic/195.html"
     ]
 
     def parse(self, response):
         sel = Selector(response)
         sites = sel.xpath('//*[@id="chapter"]/li')
-        items = []
 
 #        for site in sites:
 #            item = ManagaItem()
