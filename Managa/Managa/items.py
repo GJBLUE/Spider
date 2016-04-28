@@ -14,4 +14,4 @@ class ManagaItem(Item):
 
     cname = Field()
     curl = Field()
-    cvip = Field()
+    imgUrl = Field()
