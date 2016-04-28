@@ -20,17 +20,19 @@ class u17Spider(Spider):
         sel = Selector(response)
         sites = sel.xpath('//*[@id="chapter"]/li')
 
-#        for site in sites:
-#            item = ManagaItem()
-#            item['cname'] = site.xpath('a/@title').extract()[-2:]
-#            item['curl'] = site.xpath('a/@href').extract()[-2:]
-#            item['cvip'] = site.xpath('a/@class').extract()[-2:]
-#            items.append(item)
-#        return items
         
         item = ManagaItem()
-        item['cname'] = sites.xpath('a/@title').extract()[-2:]
-        item['curl'] = sites.xpath('a/@href').extract()[-2:]
-        item['cvip'] = sites.xpath('a/@class').extract()[-2:]
+        cname = sites.xpath('a/@title').extract()[-2:]
+        curl = sites.xpath('a/@href').extract()[-2:]
+        cvip = sites.xpath('a/@class').extract()[-2:]
+        
+        if cvip[-1] == 'vip_chapter':
+            item["cname"] = cname[0]
+            item["curl"] = curl[0]
+        else:
+            item["cname"] = cname[1]
+            item["curl"] = curl[1]
+        
+        #print item
         return item
 
