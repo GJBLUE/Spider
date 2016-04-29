@@ -13,6 +13,7 @@ class u17Spider(Spider):
 
     name = "u17"
     allowed_domains = ["u17.com"]
+    download_delay = 0.5
 
     start_urls = [
         "http://www.u17.com/comic/190.html",
