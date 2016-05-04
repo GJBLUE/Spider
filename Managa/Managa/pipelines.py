@@ -6,10 +6,11 @@
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 
 from db.torndb import Connection
-
+from decorator import check_spider_pipeline
 
 class u17Pipeline(object):
     
+    @check_spider_pipeline    
     def process_item(self, item, u17Spider):
         db = Connection()
         
@@ -17,4 +18,10 @@ class u17Pipeline(object):
             item['cname'].encode('utf-8', 'ignore'), item['curl'].encode('utf-8', 'ignore'))
         print sql
         db.execute(sql)
+        return item
+
+class wmhPipeline:
+    
+    @check_spider_pipeline
+    def process_item(self, item, wmhSpider):
         return item
