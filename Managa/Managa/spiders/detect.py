@@ -28,34 +28,43 @@ class u17Spider(Spider):
     def __init__(self):
         self.item = ManagaItem()
 
+
     def parse(self, response):
         '''get new chapter'''
-        sel = Selector(response)
-        sites = sel.xpath('//*[@id="chapter"]/li')
 
         
-        cname = sites.xpath('a/@title').extract()[-2:]
-        curl = sites.xpath('a/@href').extract()[-2:]
-        cvip = sites.xpath('a/@class').extract()[-2:]
+        #sels = Selector(response)
+        #site = sel.xpath('//*[@id="chapter"]/li')
+
+            
+        sel = Selector(response)
+        site = sel.xpath('//*[@id="chapter"]/li')
+        cname = site.xpath('a/@title').extract()[-2:]
+        curl = site.xpath('a/@href').extract()[-2:]
+        cvip = site.xpath('a/@class').extract()[-2:]
         
-        if cvip[-1] == 'vip_chapter':
+        
+        if cvip != []:
             self.item["cname"] = cname[0]
             self.item["curl"] = curl[0]
         else:
-            self.item["cname"] = cname[1]
-            self.item["curl"] = curl[1]
+            self.item["cname"] = cname[-1]
+            self.item["curl"] = curl[-1]
         
-
-        request = Request(self.item["curl"], callback=self.parseChapterPic)
+        #yield self.item
+        
+        request = Request(self.item["curl"], callback=self.parseChapterPic) 
         yield request
-        #return item
 
     def parseChapterPic(self, response):
         '''get all chapter picture'''
+       
+       
         page = response.body
         img = re.findall(r'src\"\:\"(.*?)\"', page)
         imgs = [base64.b64decode(i) for i in img]
         self.item["imgUrl"] = imgs
+        
         yield self.item
 
 
