@@ -25,18 +25,13 @@ class u17Spider(Spider):
         "http://www.u17.com/comic/195.html"
     ]
     
-    def __init__(self):
-        self.item = ManagaItem()
-
 
     def parse(self, response):
         '''get new chapter'''
 
         
-        #sels = Selector(response)
-        #site = sel.xpath('//*[@id="chapter"]/li')
+        item = ManagaItem() 
 
-            
         sel = Selector(response)
         site = sel.xpath('//*[@id="chapter"]/li')
         cname = site.xpath('a/@title').extract()[-2:]
@@ -45,27 +40,30 @@ class u17Spider(Spider):
         
         
         if cvip != []:
-            self.item["cname"] = cname[0]
-            self.item["curl"] = curl[0]
+            item["cname"] = cname[0]
+            item["curl"] = curl[0]
         else:
-            self.item["cname"] = cname[-1]
-            self.item["curl"] = curl[-1]
+            item["cname"] = cname[-1]
+            item["curl"] = curl[-1]
         
         #yield self.item
         
-        request = Request(self.item["curl"], callback=self.parseChapterPic) 
+        request = Request(item["curl"], 
+                        callback=self.parseChapterPic,
+                        meta={"item":item} ) 
         yield request
 
     def parseChapterPic(self, response):
         '''get all chapter picture'''
        
-       
+        item = response.meta["item"]       
+
         page = response.body
         img = re.findall(r'src\"\:\"(.*?)\"', page)
         imgs = [base64.b64decode(i) for i in img]
-        self.item["imgUrl"] = imgs
+        item["imgUrl"] = imgs
         
-        yield self.item
+        yield item
 
 
 class wmhSpider(Spider):
@@ -77,8 +75,6 @@ class wmhSpider(Spider):
         pipelines.wmhPipeline,
     ])
 
-    def __init__(self):
-        self.item = ManagaItem()
 
     start_urls = [
         'http://manhua.weibo.com/c/60592'
@@ -86,17 +82,26 @@ class wmhSpider(Spider):
 
     def parse(self, response):
         '''get new chapter url and title'''
+
+
+        item = ManagaItem()
+
         sel = Selector(response)
         sites = sel.xpath('/html/body/div[3]/div[2]/div[3]/div/div')
 
-        self.item['cname'] = sites.xpath('a/@data-chaptername').extract()[-1]
-        self.item['curl'] = sites.xpath('a/@href').extract()[-1]
+        item['cname'] = sites.xpath('a/@data-chaptername').extract()[-1]
+        item['curl'] = sites.xpath('a/@href').extract()[-1]
 
-        request = Request(self.item['curl'], callback=self.parseChapterPic)
+        request = Request(item['curl'], 
+                          callback=self.parseChapterPic,
+                          meta={"item":item}
+                          )
         yield request
 
     def parseChapterPic(self, response):
-        '''get chapter info from Script'''
+        '''get chapter info from Script'''  
+
+        item = response.meta["item"] 
         sel = Selector(response)
         imgUrl = sel.xpath('/html/head/script[2]').extract()
         
@@ -107,6 +112,6 @@ class wmhSpider(Spider):
             imgs[i] = imgs[i].replace('.jpg', '_big.jpg').replace('\\', '')
             img.append(imgs[i])
         
-        self.item['imgUrl'] = img
+        item['imgUrl'] = img
         
-        yield self.item 
+        yield item 
