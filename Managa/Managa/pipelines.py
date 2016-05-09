@@ -6,6 +6,11 @@
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 
 #from db.torndb import Connection
+
+import scrapy
+
+from scrapy.contrib.pipeline.images import ImagesPipeline
+from scrapy.exceptions import DropItem
 from decorator import check_spider_pipeline
 from twisted.enterprise import adbapi
 from settings import db
@@ -61,8 +66,29 @@ class u17Pipeline(object):
         print e 
 
 
-class wmhPipeline:
+class imagesPipeline(ImagesPipeline):
     
+    def get_media_requests(self, item, info):
+        for image_url in item["imgUrl"]:
+            yield scrapy.Request(image_url, meta={'item':item})
+
+
+    def item_completed(self, results, item, info):
+        image_paths = [x['path'] for ok, x in results if ok]
+        if not image_paths:
+            raise DropItem("Item contains no images")
+        return item
+
+    def file_path(self, request, response=None, info=None):
+        item = request.meta['item']
+        image_guid = request.url.split('/')[-1]
+        filename = u'{0}/{1}'.format(item['cname'], image_guid)
+        return filename
+
+
+class wmhPipeline:
+
+
     @check_spider_pipeline
     def process_item(self, item, wmhSpider):
         return item

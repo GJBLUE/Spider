@@ -18,6 +18,7 @@ class u17Spider(Spider):
     
     pipeline = set([
         pipelines.u17Pipeline,
+        pipelines.imagesPipeline,
     ])
 
     start_urls = [
