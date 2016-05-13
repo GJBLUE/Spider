@@ -1,3 +1,6 @@
+# iibq
+[精明眼](http://www.iibq.com/)将漫画内容的url加密隐藏在了script中，host是一个重要的判断依据。
+
 # Managa,Scrapy
 尝试使用scrapy框架对之前已经出现的漫画进行整合
 
