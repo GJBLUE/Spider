@@ -1,3 +1,6 @@
+#proxyPool  
+找了4个免费代理网站，但都没有啥能用的，建议还是付费买。  
+
 # iibq
 [精明眼](http://www.iibq.com/)将漫画内容的url加密隐藏在了script中，host是一个重要的判断依据。
 
